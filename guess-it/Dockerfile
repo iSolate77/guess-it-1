@@ -1,41 +1,36 @@
-# Use the official Python 3.8 image as the base image
-FROM python:3.8-slim
+# Start with the Node.js base image
+FROM node:16 as node-base
 
-# Install system dependencies for numpy and Node.js
+WORKDIR /usr/src/app
+
+# Install system dependencies and Python3
 RUN apt-get update && apt-get install -y \
-    curl \
     libblas-dev \
     liblapack-dev \
     gfortran \
-    gnupg2
+    python3 \
+    python3-pip \
+    python3-venv \
+    curl
 
 # Install Node.js
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
-RUN apt-get install -y nodejs
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
+    apt-get install -y nodejs
 
-# Check node and npm
-RUN node -v
-RUN npm -v
+# Create a Python virtual environment and activate it
+RUN python3 -m venv /usr/src/app/venv
+ENV PATH="/usr/src/app/venv/bin:$PATH"
 
-# Install numpy and scikit-learn
+# Upgrade pip and install Python dependencies
+RUN pip install --upgrade pip
+RUN pip install collections-extended
 RUN pip install numpy scikit-learn
 
-# Set the working directory
-WORKDIR /usr/src/app
-
-# Install app dependencies
+# Set up Node.js application
 COPY package*.json ./
 RUN npm install
-
-# Bundle app source
 COPY . .
 
-# Clean up
-RUN apt-get purge -y --auto-remove curl && rm -rf /var/lib/apt/lists/*
-
-# Expose the port the app runs on
 EXPOSE 3000
 
-# Command to run the application
 CMD [ "node", "server.js" ]
-

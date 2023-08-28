@@ -48,8 +48,8 @@ app.post('/', async (req, res) => {
 
       result += gotRight
         ? Math.round(
-          10000000 / (1 + bet_high - bet_low) / (data_set.length - 1)
-        )
+            10000000 / (1 + bet_high - bet_low) / (data_set.length - 1)
+          )
         : 0
 
       correct += gotRight ? 1 : 0
