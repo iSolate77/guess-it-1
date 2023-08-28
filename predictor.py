@@ -40,7 +40,7 @@ class StreamingPredictor:
         upper_bound = predicted_value + base_error
 
         # Force the range to be narrower if it exceeds a threshold
-        max_allowed_range = 4  # Ensure a very narrow maximum range
+        max_allowed_range = 2  # Ensure a very narrow maximum range
         if upper_bound - lower_bound > max_allowed_range:
             mid_point = (lower_bound + upper_bound) // 2
             lower_bound = mid_point - max_allowed_range // 2
